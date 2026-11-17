@@ -1,0 +1,1027 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f7f5;
+            color: #333333;
+        }
+
+        .navbar {
+            width: 100%;
+            min-height: 75px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 6%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .brand h2 {
+            color: #087a3e;
+            font-size: 18px;
+        }
+
+        .logout-btn {
+            padding: 10px 17px;
+            background: #ffffff;
+            color: #087a3e;
+            border: 1px solid #087a3e;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .logout-btn:hover {
+            background: #f0f8f3;
+        }
+
+        .dashboard-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            color: #087a3e;
+            font-size: 26px;
+            margin-bottom: 7px;
+        }
+
+        .page-heading p {
+            color: #777777;
+            font-size: 14px;
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-heading {
+            color: #087a3e;
+            font-size: 19px;
+            margin-bottom: 20px;
+        }
+
+        .statistics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 22px;
+            border-radius: 8px;
+            border-left: 4px solid #087a3e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat-card p {
+            color: #777777;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h2 {
+            color: #087a3e;
+            font-size: 27px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            outline: none;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #087a3e;
+        }
+
+        .primary-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #087a3e;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .primary-btn:hover {
+            background: #066331;
+        }
+
+        .secondary-btn {
+            padding: 12px 20px;
+            border: 1px solid #087a3e;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #087a3e;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            background: #f0f8f3;
+        }
+
+        .danger-btn {
+            padding: 9px 13px;
+            border: none;
+            border-radius: 5px;
+            background: #dc2626;
+            color: #ffffff;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .message.error {
+            color: #dc2626;
+        }
+
+        .message.success {
+            color: #087a3e;
+        }
+
+        .candidate-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .candidate-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #eeeeee;
+            border-radius: 7px;
+            padding: 15px;
+        }
+
+        .candidate-card img {
+            width: 65px;
+            height: 65px;
+            border-radius: 6px;
+            object-fit: cover;
+            background: #eeeeee;
+        }
+
+        .candidate-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .candidate-info h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .candidate-info p {
+            color: #777777;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .empty-message {
+            color: #777777;
+            font-size: 14px;
+            padding: 15px 0;
+        }
+
+        .election-status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #eeeeee;
+            color: #555555;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .election-status.open {
+            background: #e7f6ed;
+            color: #087a3e;
+        }
+
+        .election-status.closed {
+            background: #fdeaea;
+            color: #b91c1c;
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .results-list {
+            margin-top: 15px;
+        }
+
+        .result-row {
+            padding: 13px 0;
+            border-bottom: 1px solid #eeeeee;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            background: #ffffff;
+            padding: 18px;
+            text-align: center;
+            color: #777777;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 800px) {
+            .statistics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .candidate-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .navbar {
+                padding: 10px 5%;
+            }
+
+            .brand h2 {
+                font-size: 14px;
+            }
+
+            .brand img {
+                width: 38px;
+                height: 38px;
+            }
+
+            .logout-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .dashboard-container {
+                width: 92%;
+                margin: 25px auto;
+            }
+
+            .statistics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-card h2 {
+                font-size: 22px;
+            }
+
+            .section-card {
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+            }
+
+            .control-buttons button {
+                width: 100%;
+            }
+
+            .candidate-card {
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="main-navbar">
+
+        <div class="brand">
+            <img src="images/school-logo.png" alt="University of Nigeria logo">
+            <h2>UNN Computer Science Department</h2>
+        </div>
+
+        <button class="logout-btn" id="admin-logout-btn">
+            Logout
+        </button>
+
+    </nav>
+
+    <main class="dashboard-container">
+
+        <div class="page-heading">
+            <h1>Admin Dashboard</h1>
+            <p>Manage candidates and monitor the departmental election.</p>
+        </div>
+
+        <p class="message error" id="dashboard-message"></p>
+
+        <section class="statistics-grid" id="election-statistics">
+
+            <div class="stat-card">
+                <p>Registered Students</p>
+                <h2 id="total-registered">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Students Who Voted</p>
+                <h2 id="total-voted">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Students Yet to Vote</p>
+                <h2 id="total-not-voted">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Voter Turnout</p>
+                <h2 id="voter-turnout">0%</h2>
+            </div>
+
+        </section>
+
+        <section class="section-card" id="candidate-management-section">
+
+            <h2 class="section-heading">Add Candidate</h2>
+
+            <form id="candidate-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="candidate-name">Candidate Name</label>
+                        <input
+                            type="text"
+                            id="candidate-name"
+                            name="name"
+                            placeholder="Enter candidate's full name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="candidate-level">Level</label>
+                        <select id="candidate-level" name="level" required>
+                            <option value="">Select level</option>
+                            <option value="100 Level">100 Level</option>
+                            <option value="200 Level">200 Level</option>
+                            <option value="300 Level">300 Level</option>
+                            <option value="400 Level">400 Level</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="candidate-position">Position</label>
+                        <select id="candidate-position" name="position_id" required>
+                            <option value="">Select position</option>
+                            <option value="pos_president">President</option>
+                            <option value="pos_vice_president">Vice President</option>
+                            <option value="pos_secretary">Secretary</option>
+                            <option value="pos_assistant_secretary">Assistant Secretary</option>
+                            <option value="pos_pro">Public Relations Officer (PRO)</option>
+                            <option value="pos_director_socials">Director of Socials</option>
+                            <option value="pos_dos">Director of Sports (DOS)</option>
+                            <option value="pos_dog">Director of Games (DOG)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="candidate-photo">Candidate Photo</label>
+                        <input
+                            type="file"
+                            id="candidate-photo"
+                            name="photo"
+                            accept="image/*"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <p class="message error" id="candidate-message"></p>
+                <p class="message success" id="candidate-success-message"></p>
+
+                <button type="submit" class="primary-btn" id="add-candidate-btn">
+                    Add Candidate
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="section-card" id="candidate-list-section">
+
+            <h2 class="section-heading">Registered Candidates</h2>
+
+            <div class="candidate-list" id="candidate-list">
+                <p class="empty-message">Candidates will appear here.</p>
+            </div>
+
+        </section>
+
+        <section class="section-card" id="election-control-section">
+
+            <h2 class="section-heading">Election Control</h2>
+
+            <p class="election-status" id="election-status">
+                Loading election status...
+            </p>
+
+            <div class="control-buttons">
+
+                <button class="primary-btn" id="open-voting-btn" disabled>
+                    Open Voting
+                </button>
+
+                <button class="danger-btn" id="close-voting-btn" disabled>
+                    Close Voting
+                </button>
+
+            </div>
+
+            <p class="message error" id="election-message"></p>
+
+        </section>
+
+        <section class="section-card" id="results-management-section">
+
+            <h2 class="section-heading">Election Results</h2>
+
+            <p class="empty-message" id="results-status">
+                Results have not been loaded.
+            </p>
+
+            <div class="results-list hidden" id="results-preview"></div>
+
+            <div class="control-buttons" style="margin-top: 20px;">
+
+                <button class="secondary-btn" id="preview-results-btn" disabled>
+                    Preview Results
+                </button>
+
+                <button class="primary-btn" id="publish-results-btn" disabled>
+                    Publish Results
+                </button>
+
+            </div>
+
+            <p class="message error" id="results-message"></p>
+            <p class="message success" id="results-success-message"></p>
+
+        </section>
+
+    </main>
+
+    <footer id="main-footer">
+        © 2026 University of Nigeria, Nsukka. Computer Science Department.
+    </footer>
+
+    <script>
+        // Get page elements
+        const candidateForm = document.getElementById("candidate-form");
+        const candidateName = document.getElementById("candidate-name");
+        const candidateLevel = document.getElementById("candidate-level");
+        const candidatePosition = document.getElementById("candidate-position");
+        const candidatePhoto = document.getElementById("candidate-photo");
+
+        const candidateList = document.getElementById("candidate-list");
+        const candidateMessage = document.getElementById("candidate-message");
+        const candidateSuccessMessage = document.getElementById("candidate-success-message");
+
+        const dashboardMessage = document.getElementById("dashboard-message");
+        const electionStatus = document.getElementById("election-status");
+        const electionMessage = document.getElementById("election-message");
+
+        const openVotingBtn = document.getElementById("open-voting-btn");
+        const closeVotingBtn = document.getElementById("close-voting-btn");
+
+        const previewResultsBtn = document.getElementById("preview-results-btn");
+        const publishResultsBtn = document.getElementById("publish-results-btn");
+
+        // Store information loaded from the backend
+        let candidates = [];
+        let currentElectionStatus = "pending";
+        let resultsPublished = false;
+
+        // Display a message
+        function showMessage(element, message) {
+            element.textContent = message;
+            element.style.display = "block";
+        }
+
+        // Hide a message
+        function hideMessage(element) {
+            element.textContent = "";
+            element.style.display = "none";
+        }
+
+        // Make text safe before displaying it in HTML
+        function escapeHTML(value) {
+            return String(value ?? "").replace(/[&<>"']/g, function(character) {
+                const characters = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+                };
+
+                return characters[character];
+            });
+        }
+
+        // Send a request to the backend
+        async function apiRequest(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                credentials: "same-origin"
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (response.status === 401 || response.status === 403) {
+                window.location.href = "admin-login.html";
+                throw new Error("Your admin session has expired.");
+            }
+
+            if (!response.ok) {
+                throw new Error(result.message || "Something went wrong.");
+            }
+
+            return result;
+        }
+
+        // Load dashboard information
+        async function loadDashboard() {
+            try {
+                const result = await apiRequest("/api/admin/dashboard");
+
+                const stats = result.statistics || {};
+
+                document.getElementById("total-registered").textContent =
+                    stats.total_registered ?? 0;
+
+                document.getElementById("total-voted").textContent =
+                    stats.total_voted ?? 0;
+
+                document.getElementById("total-not-voted").textContent =
+                    stats.total_not_voted ?? 0;
+
+                document.getElementById("voter-turnout").textContent =
+                    (stats.voter_turnout ?? 0) + "%";
+
+                currentElectionStatus = result.election?.status || "pending";
+                resultsPublished = result.election?.results_published === true;
+
+                updateElectionControls();
+
+            } catch (error) {
+                showMessage(dashboardMessage, error.message);
+            }
+        }
+
+        // Load candidates from the database
+        async function loadCandidates() {
+            try {
+                const result = await apiRequest("/api/admin/candidates");
+
+                candidates = result.candidates || [];
+
+                displayCandidates();
+
+            } catch (error) {
+                showMessage(dashboardMessage, error.message);
+            }
+        }
+
+        // Display candidates
+        function displayCandidates() {
+            candidateList.innerHTML = "";
+
+            if (candidates.length === 0) {
+                candidateList.innerHTML =
+                    '<p class="empty-message">No candidates have been added yet.</p>';
+                return;
+            }
+
+            candidates.forEach(function(candidate) {
+                const card = document.createElement("div");
+                card.className = "candidate-card";
+
+                const photo = document.createElement("img");
+                photo.src = candidate.photo_url || "images/school-logo.png";
+                photo.alt = "Candidate photo";
+
+                const info = document.createElement("div");
+                info.className = "candidate-info";
+
+                info.innerHTML = `
+                    <h3>${escapeHTML(candidate.name)}</h3>
+                    <p>${escapeHTML(candidate.position_name)}</p>
+                    <p>${escapeHTML(candidate.level)}</p>
+                `;
+
+                const removeButton = document.createElement("button");
+                removeButton.className = "danger-btn";
+                removeButton.textContent = "Remove";
+                removeButton.type = "button";
+
+                removeButton.addEventListener("click", function() {
+                    removeCandidate(candidate.id);
+                });
+
+                card.appendChild(photo);
+                card.appendChild(info);
+                card.appendChild(removeButton);
+
+                candidateList.appendChild(card);
+            });
+        }
+
+        // Add a candidate
+        candidateForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            hideMessage(candidateMessage);
+            hideMessage(candidateSuccessMessage);
+
+            const name = candidateName.value.trim();
+            const level = candidateLevel.value;
+            const position = candidatePosition.value;
+            const photo = candidatePhoto.files[0];
+
+            if (!name || !level || !position || !photo) {
+                showMessage(candidateMessage, "Complete all candidate fields.");
+                return;
+            }
+
+            if (!photo.type.startsWith("image/")) {
+                showMessage(candidateMessage, "Select a valid image file.");
+                return;
+            }
+
+            const positionCandidates = candidates.filter(function(candidate) {
+                return candidate.position_id === position;
+            });
+
+            if (positionCandidates.length >= 2) {
+                showMessage(
+                    candidateMessage,
+                    "A maximum of two candidates is allowed for this position."
+                );
+                return;
+            }
+
+            const formData = new FormData();
+
+            formData.append("name", name);
+            formData.append("level", level);
+            formData.append("position_id", position);
+            formData.append("photo", photo);
+
+            const addButton = document.getElementById("add-candidate-btn");
+
+            addButton.disabled = true;
+            addButton.textContent = "Adding...";
+
+            try {
+                await apiRequest("/api/admin/candidates", {
+                    method: "POST",
+                    body: formData
+                });
+
+                candidateForm.reset();
+
+                showMessage(
+                    candidateSuccessMessage,
+                    "Candidate added successfully."
+                );
+
+                await loadCandidates();
+
+            } catch (error) {
+                showMessage(candidateMessage, error.message);
+            } finally {
+                addButton.disabled = false;
+                addButton.textContent = "Add Candidate";
+            }
+        });
+
+        // Remove a candidate
+        async function removeCandidate(candidateId) {
+            const confirmed = confirm("Are you sure you want to remove this candidate?");
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                await apiRequest(
+                    "/api/admin/candidates/" + encodeURIComponent(candidateId),
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                await loadCandidates();
+
+            } catch (error) {
+                showMessage(dashboardMessage, error.message);
+            }
+        }
+
+        // Update election controls
+        function updateElectionControls() {
+            electionStatus.textContent =
+                "Election Status: " + currentElectionStatus.toUpperCase();
+
+            electionStatus.className = "election-status";
+
+            if (currentElectionStatus === "open") {
+                electionStatus.classList.add("open");
+            }
+
+            if (currentElectionStatus === "closed") {
+                electionStatus.classList.add("closed");
+            }
+
+            openVotingBtn.disabled = currentElectionStatus === "open" ||
+                currentElectionStatus === "closed";
+
+            closeVotingBtn.disabled = currentElectionStatus !== "open";
+
+            previewResultsBtn.disabled = currentElectionStatus !== "closed";
+
+            publishResultsBtn.disabled =
+                currentElectionStatus !== "closed" || resultsPublished;
+
+            if (resultsPublished) {
+                document.getElementById("results-status").textContent =
+                    "Official election results have been published.";
+            }
+        }
+
+        // Open voting
+        openVotingBtn.addEventListener("click", async function() {
+            const confirmed = confirm("Are you sure you want to open voting?");
+
+            if (!confirmed) {
+                return;
+            }
+
+            hideMessage(electionMessage);
+            openVotingBtn.disabled = true;
+
+            try {
+                await apiRequest("/api/admin/election/open", {
+                    method: "POST"
+                });
+
+                currentElectionStatus = "open";
+                updateElectionControls();
+
+                showMessage(electionMessage, "Voting has been opened.");
+
+            } catch (error) {
+                showMessage(electionMessage, error.message);
+                openVotingBtn.disabled = false;
+            }
+        });
+
+        // Close voting
+        closeVotingBtn.addEventListener("click", async function() {
+            const confirmed = confirm("Are you sure you want to close voting?");
+
+            if (!confirmed) {
+                return;
+            }
+
+            hideMessage(electionMessage);
+            closeVotingBtn.disabled = true;
+
+            try {
+                await apiRequest("/api/admin/election/close", {
+                    method: "POST"
+                });
+
+                currentElectionStatus = "closed";
+                updateElectionControls();
+
+                showMessage(electionMessage, "Voting has been closed.");
+
+                await loadDashboard();
+
+            } catch (error) {
+                showMessage(electionMessage, error.message);
+                closeVotingBtn.disabled = false;
+            }
+        });
+
+        // Preview election results
+        previewResultsBtn.addEventListener("click", async function() {
+            const resultsStatus = document.getElementById("results-status");
+            const resultsPreview = document.getElementById("results-preview");
+            const resultsMessage = document.getElementById("results-message");
+
+            hideMessage(resultsMessage);
+
+            try {
+                const result = await apiRequest("/api/admin/results/preview");
+
+                resultsPreview.innerHTML = "";
+
+                const results = result.results || [];
+
+                if (results.length === 0) {
+                    resultsStatus.textContent = "No results are available.";
+                    resultsPreview.classList.add("hidden");
+                    return;
+                }
+
+                results.forEach(function(item) {
+                    const row = document.createElement("div");
+                    row.className = "result-row";
+
+                    row.innerHTML = `
+                        <span>
+                            ${escapeHTML(item.position_name)}
+                            . ${escapeHTML(item.candidate_name)}
+                        </span>
+                        <strong>${escapeHTML(item.vote_count)} votes</strong>
+                    `;
+
+                    resultsPreview.appendChild(row);
+                });
+
+                resultsStatus.textContent = "Results preview";
+                resultsPreview.classList.remove("hidden");
+
+            } catch (error) {
+                showMessage(resultsMessage, error.message);
+            }
+        });
+
+        // Publish official results
+        publishResultsBtn.addEventListener("click", async function() {
+            const confirmed = confirm(
+                "Publish the official election results? Students will be able to view them."
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            hideMessage(document.getElementById("results-message"));
+            hideMessage(document.getElementById("results-success-message"));
+
+            publishResultsBtn.disabled = true;
+
+            try {
+                await apiRequest("/api/admin/results/publish", {
+                    method: "POST"
+                });
+
+                resultsPublished = true;
+                updateElectionControls();
+
+                showMessage(
+                    document.getElementById("results-success-message"),
+                    "Election results have been published successfully."
+                );
+
+            } catch (error) {
+                showMessage(
+                    document.getElementById("results-message"),
+                    error.message
+                );
+
+                publishResultsBtn.disabled = false;
+            }
+        });
+
+        // Log out the administrator
+        document.getElementById("admin-logout-btn").addEventListener("click", async function() {
+            const confirmed = confirm("Are you sure you want to log out?");
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                await apiRequest("/api/admin/logout", {
+                    method: "POST"
+                });
+
+                window.location.href = "admin-login.html";
+
+            } catch (error) {
+                showMessage(dashboardMessage, error.message);
+            }
+        });
+
+        // Load dashboard data when the page opens
+        async function initializeDashboard() {
+            await loadDashboard();
+            await loadCandidates();
+        }
+
+        initializeDashboard();
+    </script>
+
+</body>
+</html>

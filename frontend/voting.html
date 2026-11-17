@@ -1,0 +1,588 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Voting Portal | UNN Computer Science</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f4;
+            color: #222;
+        }
+
+        .navbar {
+            background: #087a3e;
+            color: white;
+            padding: 15px 6%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .navbar h2 {
+            font-size: 18px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 35px auto;
+        }
+
+        .page-heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            color: #087a3e;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .student-information-section,
+        .voting-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .student-information-section h2,
+        .voting-section h2 {
+            color: #087a3e;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .student-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .student-detail {
+            background: #f3f8f4;
+            padding: 15px;
+            border-radius: 7px;
+        }
+
+        .student-detail span {
+            display: block;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .student-detail strong {
+            font-size: 15px;
+            color: #222;
+            overflow-wrap: anywhere;
+        }
+
+        .position-section {
+            margin-bottom: 30px;
+        }
+
+        .position-section h3 {
+            font-size: 17px;
+            color: #087a3e;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .candidate-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .candidate-card {
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .candidate-card:hover {
+            border-color: #087a3e;
+            background: #f7fbf8;
+        }
+
+        .candidate-card:has(input:checked) {
+            border: 2px solid #087a3e;
+            background: #f0f8f2;
+        }
+
+        .candidate-card input {
+            width: 18px;
+            height: 18px;
+            accent-color: #087a3e;
+            cursor: pointer;
+        }
+
+        .candidate-card img {
+            width: 65px;
+            height: 65px;
+            border-radius: 7px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .candidate-details h4 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .candidate-details p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        button {
+            background: #087a3e;
+            color: white;
+            border: none;
+            padding: 13px 30px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #056331;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .error-message {
+            display: block;
+            color: #b42318;
+            background: #fef3f2;
+        }
+
+        .success-message {
+            display: block;
+            color: #087a3e;
+            background: #eaf7ee;
+        }
+
+        .empty-message {
+            color: #777;
+            font-size: 14px;
+            padding: 12px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .container {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .student-information-section,
+            .voting-section {
+                padding: 18px;
+            }
+
+            .student-details {
+                grid-template-columns: 1fr;
+            }
+
+            .candidate-list {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar h2 {
+                font-size: 15px;
+            }
+
+            .page-heading h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="main-navbar">
+        <img src="images/school-logo.png" alt="UNN Logo">
+        <h2>UNN Computer Science Department</h2>
+    </nav>
+
+    <main class="container">
+
+        <div class="page-heading">
+            <h1>Student Voting Portal</h1>
+            <p>Select your preferred candidates for each position.</p>
+        </div>
+
+        <section class="student-information-section" id="student-information-section">
+            <h2>Student Information</h2>
+
+            <div class="student-details">
+                <div class="student-detail">
+                    <span>Name</span>
+                    <strong id="student-full-name">Loading...</strong>
+                </div>
+
+                <div class="student-detail">
+                    <span>Matric Number</span>
+                    <strong id="student-matric-number">Loading...</strong>
+                </div>
+
+                <div class="student-detail">
+                    <span>Level</span>
+                    <strong id="student-level">Loading...</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="voting-section" id="voting-section">
+            <h2>Available Candidates</h2>
+
+            <div id="voting-message" class="message"></div>
+
+            <form id="voting-form">
+
+                <div id="positions-container">
+                    <p class="empty-message">Loading candidates...</p>
+                </div>
+
+                <div class="submit-section" id="submit-section">
+                    <button type="submit" id="submit-vote-btn" disabled>
+                        Submit Vote
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+    </main>
+
+    <footer id="main-footer">
+        © 2026 University of Nigeria, Nsukka. Computer Science Department.
+    </footer>
+
+    <script>
+        // Get page elements
+        const studentFullName = document.getElementById("student-full-name");
+        const studentMatricNumber = document.getElementById("student-matric-number");
+        const studentLevel = document.getElementById("student-level");
+
+        const positionsContainer = document.getElementById("positions-container");
+        const votingForm = document.getElementById("voting-form");
+        const votingMessage = document.getElementById("voting-message");
+        const submitVoteBtn = document.getElementById("submit-vote-btn");
+
+        // Available election positions
+        const positions = [
+            { id: "pos_president", name: "President" },
+            { id: "pos_vice_president", name: "Vice President" },
+            { id: "pos_secretary", name: "Secretary" },
+            { id: "pos_assistant_secretary", name: "Assistant Secretary" },
+            { id: "pos_pro", name: "Public Relations Officer (PRO)" },
+            { id: "pos_director_socials", name: "Director of Socials" },
+            { id: "pos_dos", name: "Director of Sports (DOS)" },
+            { id: "pos_dog", name: "Director of Games (DOG)" }
+        ];
+
+        let candidates = [];
+        let votingIsOpen = false;
+
+        // Make API requests
+        async function apiRequest(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                credentials: "same-origin",
+                headers: {
+                    ...(options.headers || {})
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                const error = new Error(
+                    result.message || "Something went wrong."
+                );
+
+                error.code = result.code;
+                error.status = response.status;
+
+                throw error;
+            }
+
+            return result;
+        }
+
+        // Display messages
+        function displayMessage(message, type = "error") {
+            votingMessage.textContent = message;
+            votingMessage.className = "message " +
+                (type === "success" ? "success-message" : "error-message");
+        }
+
+        // Display student information
+        function displayStudentInformation(student) {
+            studentFullName.textContent = student.full_name || "";
+            studentMatricNumber.textContent = student.matric_number || "";
+            studentLevel.textContent = student.level || "";
+        }
+
+        // Load student information
+        async function loadStudentInformation() {
+            const result = await apiRequest("/api/students/me");
+
+            if (!result.student) {
+                throw new Error("Student information could not be loaded.");
+            }
+
+            displayStudentInformation(result.student);
+        }
+
+        // Load election status
+        async function loadElectionStatus() {
+            const result = await apiRequest("/api/election/status");
+
+            votingIsOpen = result.status === "open";
+
+            if (!votingIsOpen) {
+                displayMessage("Voting is currently closed.");
+            }
+        }
+
+        // Load candidates from the database
+        async function loadCandidates() {
+            const result = await apiRequest("/api/candidates");
+
+            candidates = result.candidates || [];
+
+            displayCandidates();
+        }
+
+        // Display candidates under their respective positions
+        function displayCandidates() {
+            positionsContainer.innerHTML = "";
+
+            let allPositionsHaveCandidates = true;
+
+            positions.forEach(position => {
+                const positionCandidates = candidates.filter(candidate =>
+                    candidate.position_id === position.id
+                );
+
+                const positionSection = document.createElement("div");
+                positionSection.className = "position-section";
+
+                const heading = document.createElement("h3");
+                heading.textContent = position.name;
+
+                positionSection.appendChild(heading);
+
+                if (positionCandidates.length === 0) {
+                    allPositionsHaveCandidates = false;
+
+                    const emptyMessage = document.createElement("p");
+                    emptyMessage.className = "empty-message";
+                    emptyMessage.textContent = "No candidates available for this position.";
+
+                    positionSection.appendChild(emptyMessage);
+                } else {
+                    const candidateList = document.createElement("div");
+                    candidateList.className = "candidate-list";
+
+                    positionCandidates.forEach(candidate => {
+                        const candidateCard = document.createElement("label");
+                        candidateCard.className = "candidate-card";
+
+                        const radio = document.createElement("input");
+                        radio.type = "radio";
+                        radio.name = position.id;
+                        radio.value = candidate.id;
+                        radio.id = "candidate-" + candidate.id;
+                        radio.required = true;
+
+                        const image = document.createElement("img");
+                        image.src = candidate.photo_url || "images/school-logo.png";
+                        image.alt = candidate.name || "Candidate";
+
+                        image.onerror = function () {
+                            this.src = "images/school-logo.png";
+                        };
+
+                        const details = document.createElement("div");
+                        details.className = "candidate-details";
+
+                        const name = document.createElement("h4");
+                        name.textContent = candidate.name || "";
+
+                        const level = document.createElement("p");
+                        level.textContent = candidate.level || "";
+
+                        details.appendChild(name);
+                        details.appendChild(level);
+
+                        candidateCard.appendChild(radio);
+                        candidateCard.appendChild(image);
+                        candidateCard.appendChild(details);
+
+                        candidateList.appendChild(candidateCard);
+                    });
+
+                    positionSection.appendChild(candidateList);
+                }
+
+                positionsContainer.appendChild(positionSection);
+            });
+
+            if (!allPositionsHaveCandidates) {
+                displayMessage(
+                    "Voting cannot proceed until candidates are added for all positions."
+                );
+            }
+
+            submitVoteBtn.disabled =
+                !allPositionsHaveCandidates || !votingIsOpen;
+        }
+
+        // Collect selected candidates
+        function collectVotes() {
+            const votes = [];
+
+            for (const position of positions) {
+                const selectedCandidate = document.querySelector(
+                    'input[name="' + position.id + '"]:checked'
+                );
+
+                if (!selectedCandidate) {
+                    return null;
+                }
+
+                votes.push({
+                    position_id: position.id,
+                    candidate_id: selectedCandidate.value
+                });
+            }
+
+            return votes;
+        }
+
+        // Submit votes
+        votingForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (!votingIsOpen) {
+                displayMessage("Voting is currently closed.");
+                return;
+            }
+
+            const votes = collectVotes();
+
+            if (!votes) {
+                displayMessage("Please select a candidate for every position.");
+                return;
+            }
+
+            const confirmed = confirm(
+                "Are you sure you want to submit your votes? You cannot vote again after submission."
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            submitVoteBtn.disabled = true;
+            submitVoteBtn.textContent = "Submitting...";
+
+            try {
+                await apiRequest("/api/votes", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ votes: votes })
+                });
+
+                window.location.href = "success.html";
+
+            } catch (error) {
+                if (error.code === "ALREADY_VOTED") {
+                    window.location.href = "already-voted.html";
+                    return;
+                }
+
+                displayMessage(error.message);
+
+                submitVoteBtn.disabled = false;
+                submitVoteBtn.textContent = "Submit Vote";
+            }
+        });
+
+        // Initialize voting portal
+        async function initializeVotingPage() {
+            try {
+                await loadStudentInformation();
+                await loadElectionStatus();
+                await loadCandidates();
+
+            } catch (error) {
+                if (error.status === 401 || error.status === 403) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                displayMessage(error.message);
+                submitVoteBtn.disabled = true;
+            }
+        }
+
+        initializeVotingPage();
+    </script>
+
+</body>
+</html>

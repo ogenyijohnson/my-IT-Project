@@ -1,0 +1,431 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email | JUBOT</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+                url("images/campus.jpg");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            width: 100%;
+            min-height: 75px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            padding: 10px 7%;
+            gap: 12px;
+        }
+
+        .navbar img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .navbar h2 {
+            color: #087a3e;
+            font-size: 19px;
+            font-weight: 600;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .verification-card {
+            width: 100%;
+            max-width: 450px;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .verification-card h1 {
+            color: #087a3e;
+            font-size: 25px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .verification-card .description {
+            color: #666666;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 8px;
+        }
+
+        .form-group input:focus {
+            border-color: #087a3e;
+        }
+
+        .form-group input.invalid {
+            border-color: #dc2626;
+        }
+
+        .message {
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.error {
+            color: #dc2626;
+        }
+
+        .message.success {
+            color: #087a3e;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 5px;
+            background: #087a3e;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .primary-btn:hover {
+            background: #066331;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            border: 1px solid #087a3e;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #087a3e;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .secondary-btn:hover {
+            background: #f0f8f3;
+        }
+
+        .success-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #e7f6ed;
+            color: #087a3e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+        }
+
+        .student-details {
+            margin: 25px 0;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 13px;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 13px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row span:first-child {
+            color: #666666;
+        }
+
+        .detail-row span:last-child {
+            color: #222222;
+            font-weight: 600;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            background: #ffffff;
+            padding: 17px 10px;
+            text-align: center;
+            color: #666666;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 10px 5%;
+            }
+
+            .navbar h2 {
+                font-size: 16px;
+            }
+
+            .verification-card {
+                padding: 25px 20px;
+            }
+
+            .verification-card h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="main-navbar">
+        <img src="images/school-logo.png" alt="University of Nigeria logo">
+        <h2>UNN Computer Science Department</h2>
+    </nav>
+
+    <main class="main-container">
+
+        <section class="verification-card" id="verification-section">
+
+            <div id="verification-form-section">
+                <h1>Verify Your Email</h1>
+
+                <p class="description">
+                    Enter the six-digit verification code sent to your email address.
+                </p>
+
+                <form id="verification-form">
+
+                    <div class="form-group">
+                        <label for="verification-code">Verification Code</label>
+                        <input
+                            type="text"
+                            id="verification-code"
+                            name="verification_code"
+                            placeholder="000000"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            required
+                        >
+                    </div>
+
+                    <p class="message error" id="verification-message"></p>
+
+                    <button type="submit" class="primary-btn" id="verify-email-btn">
+                        Verify Email
+                    </button>
+
+                    <button type="button" class="secondary-btn" id="resend-code-btn">
+                        Resend Code
+                    </button>
+
+                    <p class="message" id="resend-message"></p>
+
+                </form>
+            </div>
+
+            <div id="registration-success-section" class="hidden">
+
+                <div class="success-icon">✓</div>
+
+                <h1>Registration Successful</h1>
+
+                <p class="description">
+                    Your email has been verified successfully. Your student information is shown below.
+                </p>
+
+                <div class="student-details">
+
+                    <div class="detail-row">
+                        <span>Full Name</span>
+                        <span id="student-full-name">-</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Matric Number</span>
+                        <span id="student-matric-number">-</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Email Address</span>
+                        <span id="student-email">-</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Department</span>
+                        <span id="student-department">-</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Level</span>
+                        <span id="student-level">-</span>
+                    </div>
+
+                </div>
+
+                <button type="button" class="primary-btn" id="return-to-login-btn">
+                    Continue to Login
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer id="main-footer">
+        © 2026 University of Nigeria, Nsukka. Computer Science Department.
+    </footer>
+
+    <script>
+        // Get page elements
+        const verificationForm = document.getElementById("verification-form");
+        const verificationCode = document.getElementById("verification-code");
+        const verificationMessage = document.getElementById("verification-message");
+        const resendMessage = document.getElementById("resend-message");
+
+        const verificationFormSection = document.getElementById("verification-form-section");
+        const registrationSuccessSection = document.getElementById("registration-success-section");
+
+        const verifyEmailBtn = document.getElementById("verify-email-btn");
+        const resendCodeBtn = document.getElementById("resend-code-btn");
+        const returnToLoginBtn = document.getElementById("return-to-login-btn");
+
+        // Display a message
+        function displayMessage(element, message, type) {
+            element.textContent = message;
+            element.className = "message " + type;
+            element.style.display = "block";
+        }
+
+        // Validate the verification code
+        function isValidVerificationCode(code) {
+            return /^\d{6}$/.test(code);
+        }
+
+        // Display the student's information
+        function displayStudentInformation(student) {
+            document.getElementById("student-full-name").textContent = student.full_name;
+            document.getElementById("student-matric-number").textContent = student.matric_number;
+            document.getElementById("student-email").textContent = student.email;
+            document.getElementById("student-department").textContent = student.department;
+            document.getElementById("student-level").textContent = student.level;
+
+            verificationFormSection.classList.add("hidden");
+            registrationSuccessSection.classList.remove("hidden");
+        }
+
+        // Verify the email address
+        verificationForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const code = verificationCode.value.trim();
+
+            verificationMessage.style.display = "none";
+            verificationCode.classList.remove("invalid");
+
+            if (!isValidVerificationCode(code)) {
+                verificationCode.classList.add("invalid");
+
+                displayMessage(
+                    verificationMessage,
+                    "Enter a valid six-digit verification code.",
+                    "error"
+                );
+
+                return;
+            }
+
+            // Connect this section to the email verification backend
+            displayMessage(
+                verificationMessage,
+                "Email verification will be activated when the backend is connected.",
+                "error"
+            );
+        });
+
+        // Resend the verification code
+        resendCodeBtn.addEventListener("click", function() {
+            resendMessage.style.display = "none";
+
+            // Connect this section to the backend resend-code endpoint
+            displayMessage(
+                resendMessage,
+                "Resending verification codes will be activated when the backend is connected.",
+                "error"
+            );
+        });
+
+        // Return to the login page
+        returnToLoginBtn.addEventListener("click", function() {
+            window.location.href = "index.html";
+        });
+
+        // Allow only numbers in the verification code field
+        verificationCode.addEventListener("input", function() {
+            this.value = this.value.replace(/\D/g, "").slice(0, 6);
+            this.classList.remove("invalid");
+            verificationMessage.style.display = "none";
+        });
+    </script>
+
+</body>
+</html>

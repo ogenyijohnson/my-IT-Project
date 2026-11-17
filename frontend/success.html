@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Submitted | UNN Computer Science</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f4f7f4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: #087a3e;
+            color: white;
+            padding: 15px 6%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .navbar h2 {
+            font-size: 18px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 15px;
+        }
+
+        .success-card {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .success-icon {
+            width: 75px;
+            height: 75px;
+            background: #e7f5ec;
+            color: #087a3e;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            margin: 0 auto 22px;
+        }
+
+        .success-card h1 {
+            color: #087a3e;
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        .success-card p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .success-card a {
+            display: inline-block;
+            background: #087a3e;
+            color: white;
+            text-decoration: none;
+            padding: 13px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .success-card a:hover {
+            background: #056331;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 500px) {
+            .success-card {
+                padding: 35px 20px;
+            }
+
+            .success-card h1 {
+                font-size: 22px;
+            }
+
+            .navbar h2 {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="main-navbar">
+        <img src="images/school-logo.png" alt="UNN Logo">
+        <h2>UNN Computer Science Department</h2>
+    </nav>
+
+    <main class="main-content">
+        <section class="success-card" id="success-section">
+
+            <div class="success-icon">
+                &#10003;
+            </div>
+
+            <h1>Vote Submitted Successfully!</h1>
+
+            <p>
+                Thank you for participating in the Computer Science
+                Department election. Your vote has been submitted
+                successfully.
+            </p>
+
+            <a href="index.html" id="return-to-login-btn">
+                Return to Login
+            </a>
+
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        © 2026 University of Nigeria, Nsukka. Computer Science Department.
+    </footer>
+
+</body>
+</html>

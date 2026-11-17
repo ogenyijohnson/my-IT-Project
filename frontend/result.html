@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Results | UNN Computer Science</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f4;
+            color: #222;
+        }
+
+        .navbar {
+            background: #087a3e;
+            color: white;
+            padding: 15px 6%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .navbar h2 {
+            font-size: 18px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 35px auto;
+            min-height: 65vh;
+        }
+
+        .page-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-heading h1 {
+            color: #087a3e;
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .page-heading p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .results-status {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 9px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .results-status p {
+            color: #666;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .position-result {
+            background: white;
+            padding: 22px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .position-result h2 {
+            color: #087a3e;
+            font-size: 19px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-candidate {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-candidate:last-child {
+            border-bottom: none;
+        }
+
+        .result-candidate img {
+            width: 60px;
+            height: 60px;
+            border-radius: 7px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-info h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .candidate-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .vote-count {
+            text-align: right;
+            color: #087a3e;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .winner-label {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 5px 9px;
+            background: #e7f5ec;
+            color: #087a3e;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #b42318;
+            background: #fef3f2;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #087a3e;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .page-heading h1 {
+                font-size: 23px;
+            }
+
+            .position-result {
+                padding: 17px;
+            }
+
+            .result-candidate {
+                gap: 10px;
+            }
+
+            .result-candidate img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .vote-count {
+                font-size: 14px;
+            }
+
+            .navbar h2 {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="main-navbar">
+        <img src="images/school-logo.png" alt="UNN Logo">
+        <h2>UNN Computer Science Department</h2>
+    </nav>
+
+    <main class="container">
+
+        <div class="page-heading">
+            <h1>Election Results</h1>
+            <p>University of Nigeria, Nsukka. Computer Science Department.</p>
+        </div>
+
+        <section class="results-status" id="results-status">
+            <p id="results-status-message">
+                Checking election results...
+            </p>
+
+            <div class="error-message" id="results-error-message"></div>
+        </section>
+
+        <section class="results-container" id="results-container">
+        </section>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="back-link" id="back-to-home-link">
+                Return to Home
+            </a>
+        </div>
+
+    </main>
+
+    <footer id="main-footer">
+        © 2026 University of Nigeria, Nsukka. Computer Science Department.
+    </footer>
+
+    <script>
+        // Get page elements
+        const resultsStatus = document.getElementById("results-status");
+        const resultsStatusMessage = document.getElementById("results-status-message");
+        const resultsContainer = document.getElementById("results-container");
+        const resultsErrorMessage = document.getElementById("results-error-message");
+
+        // Make API request
+        async function apiRequest(url) {
+            const response = await fetch(url, {
+                method: "GET",
+                credentials: "same-origin"
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Unable to load results.");
+            }
+
+            return result;
+        }
+
+        // Display results
+        function displayResults(results) {
+            resultsContainer.innerHTML = "";
+
+            results.forEach(position => {
+                const positionSection = document.createElement("div");
+                positionSection.className = "position-result";
+
+                const heading = document.createElement("h2");
+                heading.textContent = position.position_name;
+
+                positionSection.appendChild(heading);
+
+                position.candidates.forEach(candidate => {
+                    const candidateRow = document.createElement("div");
+                    candidateRow.className = "result-candidate";
+
+                    const image = document.createElement("img");
+                    image.src = candidate.photo_url || "images/school-logo.png";
+                    image.alt = candidate.name || "Candidate";
+
+                    image.onerror = function () {
+                        this.src = "images/school-logo.png";
+                    };
+
+                    const candidateInfo = document.createElement("div");
+                    candidateInfo.className = "candidate-info";
+
+                    const name = document.createElement("h3");
+                    name.textContent = candidate.name;
+
+                    const level = document.createElement("p");
+                    level.textContent = candidate.level || "";
+
+                    candidateInfo.appendChild(name);
+                    candidateInfo.appendChild(level);
+
+                    if (candidate.is_winner) {
+                        const winner = document.createElement("span");
+                        winner.className = "winner-label";
+                        winner.textContent = "WINNER";
+                        candidateInfo.appendChild(winner);
+                    }
+
+                    const voteCount = document.createElement("div");
+                    voteCount.className = "vote-count";
+                    voteCount.textContent = candidate.vote_count + " votes";
+
+                    candidateRow.appendChild(image);
+                    candidateRow.appendChild(candidateInfo);
+                    candidateRow.appendChild(voteCount);
+
+                    positionSection.appendChild(candidateRow);
+                });
+
+                resultsContainer.appendChild(positionSection);
+            });
+
+            resultsContainer.style.display = "block";
+            resultsStatusMessage.textContent = "Official election results have been published.";
+        }
+
+        // Load published results
+        async function loadResults() {
+            try {
+                const result = await apiRequest("/api/results");
+
+                if (!result.published) {
+                    resultsStatusMessage.textContent =
+                        "Election results have not yet been published. Please check back later.";
+
+                    return;
+                }
+
+                if (!Array.isArray(result.results) || result.results.length === 0) {
+                    resultsStatusMessage.textContent =
+                        "No election results are available.";
+                    return;
+                }
+
+                displayResults(result.results);
+
+            } catch (error) {
+                resultsErrorMessage.textContent = error.message;
+                resultsErrorMessage.style.display = "block";
+
+                resultsStatusMessage.textContent =
+                    "Unable to load election results at this time.";
+            }
+        }
+
+        // Initialize results page
+        loadResults();
+    </script>
+
+</body>
+</html>

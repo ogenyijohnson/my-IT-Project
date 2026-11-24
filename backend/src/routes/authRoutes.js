@@ -5,67 +5,84 @@ const router = express.Router();
 const supabase = require("../../config/supabase");
 const authClient = require("../auth/authClient");
 
-// Request email verification code
+// Clean matric number
+function cleanMatricNumber(value) {
+    return String(value || "").trim().toUpperCase();
+}
+
+// Clean email
+function cleanEmail(value) {
+    return String(value || "").trim().toLowerCase();
+}
+
+// Validate matric number
+function isValidMatricNumber(matricNumber) {
+    return /^202[3-6]\/\d{6}$/.test(matricNumber);
+}
+
+
+// STUDENT REGISTRATION
 router.post("/register", async (req, res) => {
     try {
-        const { full_name, matric_number, email, level } = req.body;
+        const matricNumber = cleanMatricNumber(req.body?.matric_number);
+        const email = cleanEmail(req.body?.email);
 
-        if (!full_name || !matric_number || !email || !level) {
+        // Check required registration details
+        if (!matricNumber || !email) {
             return res.status(400).json({
                 success: false,
-                message: "Please provide all required registration details."
+                message: "Matric number and email are required."
             });
         }
 
-        const cleanEmail = email.trim().toLowerCase();
-        const cleanMatric = matric_number.trim().toUpperCase();
-
-        // Check whether matric number already exists
-        const { data: existingMatric, error: matricError } = await supabase
-            .from("students")
-            .select("id")
-            .eq("matric_number", cleanMatric)
-            .limit(1);
-
-        if (matricError) throw matricError;
-
-        if (existingMatric.length > 0) {
-            return res.status(409).json({
+        if (!isValidMatricNumber(matricNumber)) {
+            return res.status(400).json({
                 success: false,
-                message: "This matriculation number is already registered."
+                message: "Invalid matriculation number format."
             });
         }
 
-        // Check whether email already exists
-        const { data: existingEmail, error: emailError } = await supabase
+        // Find student in the existing department roster
+        const { data: student, error: studentError } = await supabase
             .from("students")
-            .select("id")
-            .eq("email", cleanEmail)
-            .limit(1);
+            .select("id, auth_user_id, full_name, matric_number, email, level, department")
+            .eq("matric_number", matricNumber)
+            .maybeSingle();
 
-        if (emailError) throw emailError;
+        if (studentError) throw studentError;
 
-        if (existingEmail.length > 0) {
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "This matriculation number is not on the department's student register."
+            });
+        }
+
+        // Prevent duplicate registration
+        if (student.auth_user_id) {
             return res.status(409).json({
                 success: false,
-                message: "This email address is already registered."
+                message: "This student has already completed registration. Please log in."
+            });
+        }
+
+        // Confirm email matches the existing student record
+        if (cleanEmail(student.email) !== email) {
+            return res.status(400).json({
+                success: false,
+                message: "The email address does not match the student record."
             });
         }
 
         // Send email verification code
-        const { error } = await authClient.auth.signInWithOtp({
-            email: cleanEmail,
+        const { error: otpError } = await authClient.auth.signInWithOtp({
+            email,
             options: {
-                shouldCreateUser: true,
-                data: {
-                    full_name: full_name.trim(),
-                    matric_number: cleanMatric,
-                    level: level.trim()
-                }
+                shouldCreateUser: true
             }
         });
 
-        if (error) throw error;
+        if (otpError) throw otpError;
 
         return res.status(200).json({
             success: true,
@@ -73,7 +90,7 @@ router.post("/register", async (req, res) => {
         });
 
     } catch (error) {
-        console.error("[REGISTRATION ERROR]", error.message);
+        console.error("[REGISTRATION ERROR]", error);
 
         return res.status(500).json({
             success: false,
@@ -83,76 +100,248 @@ router.post("/register", async (req, res) => {
 });
 
 
-// Verify email code and save student information
+// VERIFY REGISTRATION OTP
 router.post("/verify-otp", async (req, res) => {
     try {
-        const { email, token } = req.body;
+        const matricNumber = cleanMatricNumber(req.body?.matric_number);
+        const email = cleanEmail(req.body?.email);
+        const token = String(req.body?.token || "").trim();
 
-        if (!email || !token) {
+        if (!matricNumber || !email || !token) {
             return res.status(400).json({
                 success: false,
-                message: "Email and verification code are required."
+                message: "Matric number, email and verification code are required."
             });
         }
 
-        const cleanEmail = email.trim().toLowerCase();
+        if (!/^\d{6}$/.test(token)) {
+            return res.status(400).json({
+                success: false,
+                message: "Enter a valid six-digit verification code."
+            });
+        }
 
-        // Verify the email code
-        const { data, error } = await authClient.auth.verifyOtp({
-            email: cleanEmail,
-            token: String(token).trim(),
+        // Find the existing student record
+        const { data: student, error: studentError } = await supabase
+            .from("students")
+            .select("id, auth_user_id, full_name, matric_number, email, level, department")
+            .eq("matric_number", matricNumber)
+            .maybeSingle();
+
+        if (studentError) throw studentError;
+
+        if (!student || cleanEmail(student.email) !== email) {
+            return res.status(400).json({
+                success: false,
+                message: "Student registration details could not be verified."
+            });
+        }
+
+        if (student.auth_user_id) {
+            return res.status(409).json({
+                success: false,
+                message: "This student has already completed registration."
+            });
+        }
+
+        // Verify OTP
+        const { data, error: verifyError } = await authClient.auth.verifyOtp({
+            email,
+            token,
             type: "email"
         });
 
-        if (error) {
+        if (verifyError) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid or expired verification code."
             });
         }
 
-        const user = data.user;
-        const details = user?.user_metadata;
-
-        if (
-            !user ||
-            !details?.full_name ||
-            !details?.matric_number ||
-            !details?.level
-        ) {
+        if (!data.user || cleanEmail(data.user.email) !== email) {
             return res.status(400).json({
                 success: false,
-                message: "Registration details could not be verified."
+                message: "Email verification could not be completed."
             });
         }
 
-        // Save verified student information
-        const { data: student, error: insertError } = await supabase
+        // Link verified Auth account to existing student record
+        const { data: updatedStudent, error: updateError } = await supabase
             .from("students")
-            .insert({
-                auth_user_id: user.id,
-                full_name: details.full_name,
-                matric_number: details.matric_number,
-                email: cleanEmail,
-                level: details.level
+            .update({
+                auth_user_id: data.user.id
             })
-            .select("id, full_name, matric_number, email, level")
-            .single();
+            .eq("id", student.id)
+            .is("auth_user_id", null)
+            .select("id, full_name, matric_number, email, level, department")
+            .maybeSingle();
 
-        if (insertError) throw insertError;
+        if (updateError) throw updateError;
 
-        return res.status(201).json({
+        if (!updatedStudent) {
+            return res.status(409).json({
+                success: false,
+                message: "This student account has already been registered."
+            });
+        }
+
+        return res.status(200).json({
             success: true,
-            message: "Registration successful.",
-            student
+            message: "Registration completed successfully.",
+            student: updatedStudent
         });
 
     } catch (error) {
-        console.error("[OTP VERIFICATION ERROR]", error.message);
+        console.error("[OTP VERIFICATION ERROR]", error);
 
         return res.status(500).json({
             success: false,
             message: "Unable to complete registration. Please try again."
+        });
+    }
+});
+
+
+// STUDENT LOGIN
+router.post("/login", async (req, res) => {
+    try {
+        const matricNumber = cleanMatricNumber(req.body?.matric_number);
+
+        if (!matricNumber) {
+            return res.status(400).json({
+                success: false,
+                message: "Matriculation number is required."
+            });
+        }
+
+        if (!isValidMatricNumber(matricNumber)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid matriculation number format."
+            });
+        }
+
+        const { data: student, error: studentError } = await supabase
+            .from("students")
+            .select("id, auth_user_id, email")
+            .eq("matric_number", matricNumber)
+            .maybeSingle();
+
+        if (studentError) throw studentError;
+
+        if (!student || !student.auth_user_id) {
+            return res.status(403).json({
+                success: false,
+                message: "You must complete registration before you can log in."
+            });
+        }
+
+        if (!student.email) {
+            return res.status(400).json({
+                success: false,
+                message: "No registered email address was found."
+            });
+        }
+
+        const { error: otpError } = await authClient.auth.signInWithOtp({
+            email: cleanEmail(student.email),
+            options: {
+                shouldCreateUser: false
+            }
+        });
+
+        if (otpError) throw otpError;
+
+        return res.status(200).json({
+            success: true,
+            message: "Login verification code sent to your registered email."
+        });
+
+    } catch (error) {
+        console.error("[LOGIN ERROR]", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to start login. Please try again."
+        });
+    }
+});
+
+
+// VERIFY LOGIN OTP
+router.post("/verify-login-otp", async (req, res) => {
+    try {
+        const matricNumber = cleanMatricNumber(req.body?.matric_number);
+        const token = String(req.body?.token || "").trim();
+
+        if (!matricNumber || !token) {
+            return res.status(400).json({
+                success: false,
+                message: "Matriculation number and verification code are required."
+            });
+        }
+
+        if (!isValidMatricNumber(matricNumber) || !/^\d{6}$/.test(token)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid matriculation number or verification code."
+            });
+        }
+
+        const { data: student, error: studentError } = await supabase
+            .from("students")
+            .select("id, auth_user_id, full_name, matric_number, email, level, department")
+            .eq("matric_number", matricNumber)
+            .maybeSingle();
+
+        if (studentError) throw studentError;
+
+        if (!student || !student.auth_user_id) {
+            return res.status(403).json({
+                success: false,
+                message: "You must complete registration before you can log in."
+            });
+        }
+
+        const { data, error: verifyError } = await authClient.auth.verifyOtp({
+            email: cleanEmail(student.email),
+            token,
+            type: "email"
+        });
+
+        if (verifyError) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired verification code."
+            });
+        }
+
+        if (!data.user || data.user.id !== student.auth_user_id) {
+            return res.status(403).json({
+                success: false,
+                message: "This account does not match the student record."
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Login successful.",
+            session: data.session,
+            student: {
+                full_name: student.full_name,
+                matric_number: student.matric_number,
+                email: student.email,
+                level: student.level,
+                department: student.department
+            }
+        });
+
+    } catch (error) {
+        console.error("[LOGIN OTP ERROR]", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to complete login. Please try again."
         });
     }
 });

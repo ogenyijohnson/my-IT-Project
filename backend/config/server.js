@@ -1,9 +1,9 @@
 
-// Load environment variables from the existing src folder
+// Load environment variables
 const path = require("path");
 
 require("dotenv").config({
-    path: path.join(__dirname, "../src/.env")
+    path: path.join(__dirname, "../.env")
 });
 
 // Import required packages
@@ -12,9 +12,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
-// Import Supabase connection
+// Import database and authentication routes
 const supabase = require("./supabase");
-
 const authRoutes = require("../src/routes/authRoutes");
 
 // Create Express application
@@ -22,7 +21,7 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-// Display debug messages only when DEBUG is true
+// Display debug messages
 function debug(message, data = "") {
     if (process.env.DEBUG === "true") {
         console.log("[DEBUG]", message, data);
@@ -41,8 +40,6 @@ app.use(cors({
 // Read JSON request data
 app.use(express.json({ limit: "10kb" }));
 
-app.use("/api/auth", authRoutes);
-
 // Limit repeated API requests
 app.use("/api", rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -51,9 +48,8 @@ app.use("/api", rateLimit({
     legacyHeaders: false
 }));
 
-
+// Connect authentication routes
 app.use("/api/auth", authRoutes);
-
 
 // Test backend and database connection
 app.get("/api/health", async (req, res) => {

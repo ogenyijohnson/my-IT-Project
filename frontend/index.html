@@ -1,677 +1,201 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNN Computer Science Election</title>
-
     <style>
-        /* GENERAL STYLING */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background:
-                linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-                url("images/campus.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        /* NAVIGATION BAR */
-        .navbar {
-            width: 100%;
-            background: white;
-            padding: 15px 7%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-section img {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
-        }
-
-        .logo-section h2 {
-            color: #087c3e;
-            font-size: 17px;
-        }
-
-        .admin-link {
-            color: #087c3e;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .admin-link:hover {
-            text-decoration: underline;
-        }
-
-        /* MAIN CONTENT */
-        .main-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 35px 15px;
-        }
-
-        .auth-card {
-            background: white;
-            width: 100%;
-            max-width: 430px;
-            padding: 35px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .page-heading {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .page-heading h1 {
-            color: #087c3e;
-            font-size: 25px;
-            margin-bottom: 10px;
-        }
-
-        .page-heading p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        /* FORM ELEMENTS */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #333;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            border-color: #087c3e;
-        }
-
-        .form-group input.invalid {
-            border-color: #d93025;
-        }
-
-        /* FORM BUTTON */
-        .submit-btn {
-            width: 100%;
-            padding: 13px;
-            background: #087c3e;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-
-        .submit-btn:hover {
-            background: #05632f;
-        }
-
-        /* FORM TOGGLE */
-        .toggle-text {
-            text-align: center;
-            margin-top: 22px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .toggle-text button {
-            background: none;
-            border: none;
-            color: #087c3e;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .toggle-text button:hover {
-            text-decoration: underline;
-        }
-
-        /* VALIDATION MESSAGES */
-        .form-message {
-            display: none;
-            padding: 11px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .form-message.error {
-            display: block;
-            background: #fdeaea;
-            color: #b42318;
-        }
-
-        .form-message.info {
-            display: block;
-            background: #eaf4ff;
-            color: #175a91;
-        }
-
-        /* HIDE ELEMENTS */
-        .hidden {
-            display: none;
-        }
-
-        /* FOOTER */
-        footer {
-            background: white;
-            padding: 15px;
-            text-align: center;
-            color: #555;
-            font-size: 12px;
-        }
-
-        /* MOBILE RESPONSIVENESS */
-        @media (max-width: 500px) {
-            .navbar {
-                padding: 12px 5%;
-            }
-
-            .logo-section img {
-                width: 38px;
-                height: 38px;
-            }
-
-            .logo-section h2 {
-                font-size: 13px;
-            }
-
-            .admin-link {
-                font-size: 12px;
-            }
-
-            .auth-card {
-                padding: 28px 22px;
-            }
-
-            .page-heading h1 {
-                font-size: 22px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)), url("images/campus.jpg") center/cover fixed; }
+        .navbar { width: 100%; background: white; padding: 15px 7%; display: flex; justify-content: space-between; align-items: center; }
+        .logo-section { display: flex; align-items: center; gap: 12px; }
+        .logo-section img { width: 45px; height: 45px; object-fit: contain; }
+        .logo-section h2 { color: #087c3e; font-size: 17px; }
+        .admin-link { color: #087c3e; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 35px 15px; }
+        .auth-card { background: white; width: 100%; max-width: 430px; padding: 35px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,.2); }
+        .page-heading { text-align: center; margin-bottom: 25px; }
+        .page-heading h1 { color: #087c3e; font-size: 25px; margin-bottom: 10px; }
+        .page-heading p { color: #666; font-size: 14px; line-height: 1.5; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; color: #333; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 13px; border: 1px solid #ccc; border-radius: 5px; outline: none; font-size: 14px; }
+        .form-group input:focus { border-color: #087c3e; }
+        .form-group input.invalid { border-color: #d93025; }
+        .submit-btn, .secondary-btn { width: 100%; padding: 13px; border-radius: 5px; font-size: 15px; cursor: pointer; }
+        .submit-btn { background: #087c3e; color: white; border: none; margin-top: 5px; }
+        .submit-btn:hover { background: #05632f; }
+        button:disabled { opacity: .65; cursor: wait; }
+        .secondary-btn { margin-top: 10px; background: white; border: 1px solid #087c3e; color: #087c3e; }
+        .toggle-text { text-align: center; margin-top: 22px; color: #666; font-size: 14px; }
+        .toggle-text button { background: none; border: none; color: #087c3e; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .form-message { display: none; padding: 11px; margin-bottom: 15px; border-radius: 5px; font-size: 13px; line-height: 1.5; }
+        .form-message.error { display: block; background: #fdeaea; color: #b42318; }
+        .form-message.info { display: block; background: #eaf4ff; color: #175a91; }
+        .hidden { display: none; }
+        footer { background: white; padding: 15px; text-align: center; color: #555; font-size: 12px; }
+        @media (max-width: 500px) { .navbar { padding: 12px 5%; } .logo-section img { width: 38px; height: 38px; } .logo-section h2 { font-size: 13px; } .admin-link { font-size: 12px; } .auth-card { padding: 28px 22px; } .page-heading h1 { font-size: 22px; } }
     </style>
 </head>
-
 <body>
-
-    <!-- NAVIGATION BAR -->
     <nav class="navbar" id="main-navbar">
-
-        <div class="logo-section">
-            <img src="/images/logoo.jfif" alt="UNN Logo">
-            <h2>UNN Computer Science</h2>
-        </div>
-
-        <a href="admin-login.html" class="admin-link" id="admin-login-link">
-            Admin Login
-        </a>
-
+        <div class="logo-section"><img src="/images/logoo.jfif" alt="UNN Logo"><h2>UNN Computer Science</h2></div>
+        <a href="admin-login.html" class="admin-link" id="admin-login-link">Admin Login</a>
     </nav>
-
-
-    <!-- MAIN CONTENT -->
     <main class="main-container">
-
         <div class="auth-card">
-
-            <!-- STUDENT LOGIN SECTION -->
             <section id="student-login-section">
-
-                <div class="page-heading">
-                    <h1>Student Login</h1>
-
-                    <p>
-                        Access the Computer Science Departmental
-                        Election Portal.
-                    </p>
-                </div>
-
+                <div class="page-heading"><h1>Student Login</h1><p>Access the Computer Science Departmental Election Portal.</p></div>
                 <form id="student-login-form" novalidate>
-
-                    <div class="form-message" id="login-message"></div>
-
-                    <div class="form-group">
-                        <label for="login-matric-number">
-                            Matriculation Number
-                        </label>
-
-                        <input
-                            type="text"
-                            id="login-matric-number"
-                            name="matric_number"
-                            placeholder="Enter your matric number"
-                            autocomplete="username"
-                            maxlength="11"
-                            required
-                        >
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="submit-btn"
-                        id="student-login-btn"
-                    >
-                        Login
-                    </button>
-
+                    <div class="form-message" id="login-message" role="status" aria-live="polite"></div>
+                    <div class="form-group"><label for="login-matric-number">Matriculation Number</label><input type="text" id="login-matric-number" name="matric_number" placeholder="2023/214283" autocomplete="username" maxlength="11" required></div>
+                    <div class="form-group hidden" id="login-otp-group"><label for="login-otp">Six-digit email verification code</label><input type="text" id="login-otp" name="token" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code"></div>
+                    <button type="submit" class="submit-btn" id="student-login-btn">Login</button>
+                    <button type="button" class="secondary-btn hidden" id="resend-login-code-btn">Resend verification code</button>
+                    <button type="button" class="secondary-btn hidden" id="change-login-number-btn">Use a different matric number</button>
                 </form>
-
-                <div class="toggle-text">
-                    Not registered?
-
-                    <button
-                        type="button"
-                        id="show-registration-btn"
-                    >
-                        Register here
-                    </button>
-                </div>
-
+                <div class="toggle-text" id="registration-toggle">Not registered? <button type="button" id="show-registration-btn">Register here</button></div>
             </section>
-
-
-            <!-- STUDENT REGISTRATION SECTION -->
             <section id="student-registration-section" class="hidden">
-
-                <div class="page-heading">
-                    <h1>Student Registration</h1>
-
-                    <p>
-                        Register for the Computer Science
-                        Departmental Election.
-                    </p>
-                </div>
-
+                <div class="page-heading"><h1>Student Registration</h1><p>Register for the Computer Science Departmental Election.</p></div>
                 <form id="student-registration-form" novalidate>
-
-                    <div
-                        class="form-message"
-                        id="registration-message">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="registration-matric-number">
-                            Matriculation Number
-                        </label>
-
-                        <input
-                            type="text"
-                            id="registration-matric-number"
-                            name="matric_number"
-                            placeholder="Enter your matric number"
-                            maxlength="11"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="registration-email">
-                            Email Address
-                        </label>
-
-                        <input
-                            type="email"
-                            id="registration-email"
-                            name="email"
-                            placeholder="Enter your email address"
-                            autocomplete="email"
-                            required
-                        >
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="submit-btn"
-                        id="student-registration-btn"
-                    >
-                        Continue
-                    </button>
-
+                    <div class="form-message" id="registration-message"></div>
+                    <div class="form-group"><label for="registration-matric-number">Matriculation Number</label><input type="text" id="registration-matric-number" name="matric_number" placeholder="2023/214283" maxlength="11" required></div>
+                    <div class="form-group"><label for="registration-email">Email Address</label><input type="email" id="registration-email" name="email" placeholder="Enter your email address" autocomplete="email" required></div>
+                    <button type="submit" class="submit-btn" id="student-registration-btn">Continue</button>
                 </form>
-
-                <div class="toggle-text">
-                    Already registered?
-
-                    <button
-                        type="button"
-                        id="show-login-btn"
-                    >
-                        Login here
-                    </button>
-                </div>
-
+                <div class="toggle-text">Already registered? <button type="button" id="show-login-btn">Login here</button></div>
             </section>
-
         </div>
-
     </main>
-
-
-    <!-- FOOTER -->
-    <footer id="main-footer">
-        &copy; 2026 University of Nigeria, Nsukka.
-        Computer Science Department.
-    </footer>
-
-
+    <footer id="main-footer">&copy; 2026 University of Nigeria, Nsukka. Computer Science Department.</footer>
     <script>
+        const loginSection = document.getElementById("student-login-section");
+        const registrationSection = document.getElementById("student-registration-section");
+        const loginForm = document.getElementById("student-login-form");
+        const matricInput = document.getElementById("login-matric-number");
+        const otpInput = document.getElementById("login-otp");
+        const otpGroup = document.getElementById("login-otp-group");
+        const loginButton = document.getElementById("student-login-btn");
+        const resendButton = document.getElementById("resend-login-code-btn");
+        const changeNumberButton = document.getElementById("change-login-number-btn");
+        const registrationToggle = document.getElementById("registration-toggle");
+        let awaitingLoginCode = false;
 
-
-        //  GET PAGE ELEMENTS
-
-
-        const loginSection = document.getElementById(
-            "student-login-section"
-        );
-
-        const registrationSection = document.getElementById(
-            "student-registration-section"
-        );
-
-        const showRegistrationBtn = document.getElementById(
-            "show-registration-btn"
-        );
-
-        const showLoginBtn = document.getElementById(
-            "show-login-btn"
-        );
-
-
-
-        //  VALIDATE MATRIC NUMBER FORMAT
-
-
-        function isValidMatricNumber(matricNumber) {
-
-            const matricPattern = /^202[3-6]\/\d{6}$/;
-
-            return matricPattern.test(matricNumber);
+        function isValidMatricNumber(value) { return /^202[3-6]\/\d{6}$/.test(value); }
+        function showMessage(id, message, type) {
+            const element = document.getElementById(id);
+            element.textContent = message;
+            element.className = "form-message " + type;
         }
-
-
-
-        //  VALIDATE EMAIL FORMAT
-
-
-        function isValidEmail(email) {
-
-            const emailPattern =
-                /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/;
-
-            if (!emailPattern.test(email)) {
-                return false;
-            }
-
-            if (email.length > 254) {
-                return false;
-            }
-
-            const domain = email.split("@")[1];
-
-            return domain.split(".").every(part =>
-                part.length > 0 &&
-                part.length <= 63 &&
-                !part.startsWith("-") &&
-                !part.endsWith("-")
-            );
-        }
-
-
-        //  DISPLAY VALIDATION MESSAGES
-
-
-        function displayMessage(elementId, message, type) {
-
-            const messageBox = document.getElementById(elementId);
-
-            messageBox.textContent = message;
-
-            messageBox.className = "form-message " + type;
-        }
-
-
-
-        //  CLEAR VALIDATION MESSAGES
-     
-
         function clearMessages() {
-
-            const messages = document.querySelectorAll(".form-message");
-
-            messages.forEach(message => {
-
-                message.textContent = "";
-
-                message.className = "form-message";
-
+            document.querySelectorAll(".form-message").forEach(element => {
+                element.textContent = "";
+                element.className = "form-message";
             });
-
-            document.querySelectorAll("input").forEach(input => {
-
-                input.classList.remove("invalid");
-
+            document.querySelectorAll("input").forEach(input => input.classList.remove("invalid"));
+        }
+        async function readResponse(response) {
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.message || `Request failed (${response.status}).`);
+            return result;
+        }
+        async function requestLoginCode() {
+            const matricNumber = matricInput.value.trim();
+            if (!isValidMatricNumber(matricNumber)) {
+                matricInput.classList.add("invalid");
+                showMessage("login-message", "Enter the correct matric number format. Example: 2023/214283.", "error");
+                return;
+            }
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ matric_number: matricNumber })
             });
+            const result = await readResponse(response);
+            awaitingLoginCode = true;
+            matricInput.disabled = true;
+            otpGroup.classList.remove("hidden");
+            resendButton.classList.remove("hidden");
+            changeNumberButton.classList.remove("hidden");
+            registrationToggle.classList.add("hidden");
+            loginButton.textContent = "Verify code";
+            otpInput.focus();
+            showMessage("login-message", result.message || "A verification code was sent to your registered email.", "info");
         }
 
-
-        //  SWITCH BETWEEN LOGIN AND REGISTRATION
-
-
-        function showRegistration() {
-
-            loginSection.classList.add("hidden");
-
-            registrationSection.classList.remove("hidden");
-
+        loginForm.addEventListener("submit", async event => {
+            event.preventDefault();
             clearMessages();
-        }
-
-
-        function showLogin() {
-
-            registrationSection.classList.add("hidden");
-
-            loginSection.classList.remove("hidden");
-
-            clearMessages();
-        }
-
-
-        
-        //  STUDENT LOGIN
-
-
-        document.getElementById("student-login-form")
-            .addEventListener("submit", function(event) {
-
-                event.preventDefault();
-
-                const matricInput = document.getElementById(
-                    "login-matric-number"
-                );
-
-                const matricNumber = matricInput.value.trim();
-
-                clearMessages();
-
-                // Check matric number format
-                if (!isValidMatricNumber(matricNumber)) {
-
-                    matricInput.classList.add("invalid");
-
-                    displayMessage(
-                        "login-message",
-                        "Enter the correct matric number format. Example: 2023/214283.",
-                        "error"
-                    );
-
+            loginButton.disabled = true;
+            try {
+                if (!awaitingLoginCode) {
+                    await requestLoginCode();
                     return;
                 }
-
-
-                // BACKEND CONNECTION WILL GO HERE
-                /*
-                    1. Send matric number to Express.
-                    2. Check the student record in Supabase.
-                    3. Confirm the student's eligibility.
-                    4. Retrieve the student's information.
-                    5. Check whether the student has already voted.
-                    6. Redirect to the appropriate page.
-                */
-
-                displayMessage(
-                    "login-message",
-                    "Student login will be activated when the backend is connected.",
-                    "info"
-                );
-
-            });
-
-
-
-        // 8. STUDENT REGISTRATION
-    
-
-        document.getElementById("student-registration-form")
-            .addEventListener("submit", function(event) {
-
-                event.preventDefault();
-
-                const matricInput = document.getElementById(
-                    "registration-matric-number"
-                );
-
-                const emailInput = document.getElementById(
-                    "registration-email"
-                );
-
-                const matricNumber = matricInput.value.trim();
-
-                const email = emailInput.value.trim();
-
-                clearMessages();
-
-
-                // Validate matric number
-                if (!isValidMatricNumber(matricNumber)) {
-
-                    matricInput.classList.add("invalid");
-
-                    displayMessage(
-                        "registration-message",
-                        "Enter the correct matric number format. Example: 2023/214283.",
-                        "error"
-                    );
-
+                const token = otpInput.value.trim();
+                if (!/^\d{6}$/.test(token)) {
+                    otpInput.classList.add("invalid");
+                    showMessage("login-message", "Enter the six-digit verification code sent to your email.", "error");
                     return;
                 }
-
-
-                // Validate email address
-                if (!isValidEmail(email)) {
-
-                    emailInput.classList.add("invalid");
-
-                    displayMessage(
-                        "registration-message",
-                        "Enter a valid email address. Example: name@gmail.com.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                //BACKEND CONNECTION WILL GO HERE
-                /*
-                    1. Send matric number and email to Express.
-                    2. Check both details against the students table.
-                    3. Confirm that the student is eligible.
-                    4. Send an email verification code.
-                    5. Redirect to verify-email.html after
-                       the backend confirms the code was sent.
-                */
-
-                displayMessage(
-                    "registration-message",
-                    "Registration will be activated when the backend is connected.",
-                    "info"
-                );
-
-            });
-
-
-
-        // CLEAR INPUT ERROR WHEN CORRECTED
-
-
-        document.querySelectorAll("input").forEach(input => {
-
-            input.addEventListener("input", function() {
-
-                this.classList.remove("invalid");
-
-            });
-
+                const response = await fetch("/api/auth/verify-login-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ matric_number: matricInput.value.trim(), token })
+                });
+                const result = await readResponse(response);
+                if (!result.session || !result.student) throw new Error("Login response did not include a student session.");
+                sessionStorage.setItem("student_session", JSON.stringify(result.session));
+                sessionStorage.setItem("student", JSON.stringify(result.student));
+                sessionStorage.setItem("student_access_token", result.session.access_token);
+                window.location.href = "voting.html";
+            } catch (error) {
+                showMessage("login-message", error.message || "Unable to connect to the server. Please try again.", "error");
+            } finally {
+                loginButton.disabled = false;
+            }
         });
 
-
-        // BUTTON EVENTS
-
-
-        showRegistrationBtn.addEventListener(
-            "click",
-            showRegistration
-        );
-
-        showLoginBtn.addEventListener(
-            "click",
-            showLogin
-        );
-
+        resendButton.addEventListener("click", async () => {
+            clearMessages();
+            resendButton.disabled = true;
+            try {
+                await requestLoginCode();
+                showMessage("login-message", "A new verification code was sent to your registered email.", "info");
+            } catch (error) {
+                showMessage("login-message", error.message || "Unable to resend the code.", "error");
+            } finally {
+                resendButton.disabled = false;
+            }
+        });
+        changeNumberButton.addEventListener("click", () => {
+            awaitingLoginCode = false;
+            matricInput.disabled = false;
+            otpInput.value = "";
+            otpGroup.classList.add("hidden");
+            resendButton.classList.add("hidden");
+            changeNumberButton.classList.add("hidden");
+            registrationToggle.classList.remove("hidden");
+            loginButton.textContent = "Login";
+            clearMessages();
+            matricInput.focus();
+        });
+        otpInput.addEventListener("input", () => { otpInput.value = otpInput.value.replace(/\D/g, "").slice(0, 6); });
+        document.getElementById("show-registration-btn").addEventListener("click", () => {
+            loginSection.classList.add("hidden");
+            registrationSection.classList.remove("hidden");
+            clearMessages();
+        });
+        document.getElementById("show-login-btn").addEventListener("click", () => {
+            registrationSection.classList.add("hidden");
+            loginSection.classList.remove("hidden");
+            clearMessages();
+        });
+        document.getElementById("student-registration-form").addEventListener("submit", event => {
+            event.preventDefault();
+            showMessage("registration-message", "Registration will be activated when the backend is connected.", "info");
+        });
     </script>
-
 </body>
 </html>
